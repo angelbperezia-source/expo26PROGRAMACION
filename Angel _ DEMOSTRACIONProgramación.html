@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Angel | Demo de Programación</title>
+<style>
+:root{--a:#00f0ff;--b:#ff2bd6;--bg:#07061a;--tx:#eaf6ff;--f:'Trebuchet MS',system-ui,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{color-scheme:dark;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:var(--f);overflow-x:hidden}
+#bar{position:fixed;top:env(safe-area-inset-top,0px);left:0;height:4px;width:0;background:linear-gradient(90deg,var(--a),var(--b));z-index:20;box-shadow:0 0 12px var(--a)}
+#bgfx{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 20% 20%,hsl(var(--h,260) 90% 25%/.7),transparent 50%),radial-gradient(circle at 80% 70%,hsl(calc(var(--h,260) + 80) 90% 30%/.6),transparent 50%)}
+section{min-height:90vh;padding:80px 6vw;display:flex;flex-direction:column;justify-content:center;gap:24px;max-width:1100px;margin:auto}
+h1{font-size:clamp(2.6rem,9vw,6rem);margin:0;line-height:1}
+h2{font-size:clamp(1.8rem,5vw,3rem);margin:0;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+p{max-width:60ch;line-height:1.6;opacity:.9}
+.ch{display:inline-block;opacity:0;transform:translateY(40px) rotate(-10deg) scale(.5);transition:.6s cubic-bezier(.2,1.6,.4,1)}
+.go .ch{opacity:1;transform:none;color:hsl(var(--c) 100% 65%);text-shadow:0 0 18px hsl(var(--c) 100% 55%)}
+.rv{opacity:0;transform:translateY(60px);transition:.8s}
+.rv.in{opacity:1;transform:none}
+.tag{display:inline-block;padding:6px 14px;border-radius:99px;border:1px solid var(--a);color:var(--a);font-size:.85rem;letter-spacing:2px;width:fit-content}
+.row{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.row>*{flex:1 1 280px}
+pre{background:#0008;border:1px solid #fff3;border-radius:14px;padding:16px;min-height:200px;margin:0;font:14px/1.6 monospace;color:#9fffa8;overflow-x:auto}
+#pv{min-height:200px;border-radius:14px;display:grid;place-items:center;font-size:1.4rem;font-weight:bold;transition:.4s;background:#222;color:#fff;padding:20px;text-align:center}
+canvas{width:100%;max-width:340px;border-radius:16px;border:2px solid var(--a);box-shadow:0 0 25px var(--a);touch-action:none;background:#02010c;display:block}
+button,select,input{font:inherit}
+button{background:#fff1;color:var(--tx);border:1px solid var(--a);border-radius:12px;padding:10px 16px;cursor:pointer;transition:.2s}
+button:hover,button:active{background:var(--a);color:#000;transform:scale(1.06)}
+.pads{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pads button{height:70px;font-size:1.3rem;border-color:var(--b)}
+.pads button:active{background:var(--b)}
+#imgbox{height:220px;border-radius:16px;background:linear-gradient(135deg,var(--a),var(--b)) center/cover;transition:filter .2s;display:grid;place-items:center;font-weight:bold;font-size:1.2rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.card{padding:22px;border-radius:18px;min-height:130px;transition:.4s;cursor:pointer;font-weight:bold}
+.c1{background:#ffffff14;backdrop-filter:blur(10px);border:1px solid #fff4}
+.c2{background:#000;border:2px solid var(--a);box-shadow:0 0 22px var(--a),inset 0 0 22px #00f0ff33;color:var(--a)}
+.c3{background:#ffd23f;color:#111;border:4px solid #111;box-shadow:8px 8px 0 #111;font-family:'Courier New',monospace}
+.c4{background:linear-gradient(135deg,var(--b),#7b2cff,var(--a));background-size:300% 300%;animation:g 4s infinite}
+@keyframes g{50%{background-position:100% 100%}}
+.card:hover{transform:translateY(-8px) rotate(-2deg) scale(1.04)}
+.list{display:grid;gap:12px;padding:0;list-style:none}
+.list li{padding:14px 18px;border-left:4px solid var(--b);background:#ffffff10;border-radius:0 12px 12px 0}
+footer{text-align:center;padding:80px 6vw 100px}
+footer .big{font-size:clamp(1.6rem,6vw,3.2rem);font-weight:bold;animation:p 2s infinite alternate}
+@keyframes p{to{text-shadow:0 0 30px var(--b);color:var(--a)}}
+label{display:flex;gap:10px;align-items:center;font-size:.9rem}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:30}
+#mx{position:fixed;inset:0;z-index:-1;opacity:0;transition:.6s;pointer-events:none}#mx.on{opacity:.6}
+#mxb{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:25;background:#000a}
+.me{display:flex;gap:28px;flex-wrap:wrap;align-items:center}
+.av{width:150px;height:150px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:4.5rem;font-weight:bold;color:#000;background:conic-gradient(var(--a),var(--b),var(--a));box-shadow:0 0 40px var(--b);animation:fl 3s ease-in-out infinite alternate}
+@keyframes fl{to{transform:translateY(-14px) rotate(6deg)}}
+#role{color:var(--a);border-right:3px solid var(--b);padding-right:4px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px}
+.stat{padding:18px;border-radius:16px;background:#ffffff12;text-align:center;border:1px solid #fff3}
+.stat b{display:block;font-size:2.4rem;color:var(--a);text-shadow:0 0 16px var(--a)}
+.chips span{display:inline-block;margin:4px;padding:8px 14px;border-radius:99px;background:linear-gradient(90deg,var(--a),var(--b));color:#000;font-weight:bold;font-size:.9rem}
+.pj{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.proj{display:block;text-decoration:none;color:inherit;padding:22px;border-radius:18px;background:#ffffff12;border:1px solid #fff3;transition:transform .15s,box-shadow .3s}
+.proj:hover{box-shadow:0 0 30px var(--a)}
+.proj h3{margin:12px 0 6px}.proj p{margin:0 0 10px;font-size:.95rem}
+.st{font-size:.72rem;font-weight:bold;padding:4px 10px;border-radius:99px;background:#3dff8a;color:#000}.st.dev{background:#ffd23f}
+.soc{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.soc a{display:block;padding:22px;border-radius:18px;text-decoration:none;color:#fff;font-weight:bold;text-align:center;font-size:1.1rem;transition:.3s}
+.soc a:hover{transform:translateY(-8px) scale(1.05) rotate(-2deg)}
+.soc small{display:block;font-weight:normal;opacity:.85;margin-top:4px}
+#fx,#mx,#hx{width:100%;height:100%;max-width:none;border:0;border-radius:0;box-shadow:none;background:transparent;position:fixed;inset:0}
+#hx{z-index:-1;pointer-events:none}
+#mxb{display:none}
+:root{--gl:#0a0828b3}
+#ctl{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:25;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:8px 10px;border-radius:24px;background:var(--gl);backdrop-filter:blur(12px);border:1px solid var(--a);max-width:94vw}
+#ctl select{background:transparent;color:var(--tx);border:1px solid var(--a);border-radius:12px;padding:8px}
+#ctl option{color:#000}
+:root[data-m=light]{--bg:#eef3ff;--tx:#12143a;--a:#0a6cff;--b:#d6179f;--gl:#ffffffd9;color-scheme:light}
+[data-m=light] #bgfx{background:radial-gradient(circle at 20% 20%,hsl(var(--h,260) 90% 88%/.9),transparent 55%),radial-gradient(circle at 80% 70%,hsl(calc(var(--h,260) + 80) 90% 86%/.9),transparent 55%)}
+[data-m=light] .go .ch{color:hsl(var(--c) 85% 38%);text-shadow:none}
+[data-m=light] .stat,[data-m=light] .proj,[data-m=light] .list li,[data-m=light] .c1,[data-m=light] button{background:#ffffffb3}
+[data-m=light] .stat,[data-m=light] .proj{border-color:#0003}
+[data-m=light] pre{background:#fff;color:#0a6b1f;border-color:#0002}
+[data-m=light] .c2{background:#fff;color:#0a6cff}
+[data-m=light] .stat b{text-shadow:none}
+[data-m=light] button:hover{background:var(--a);color:#fff}
+</style>
+</head>
+<body>
+<div id="bar"></div><div id="bgfx"></div><canvas id="hx"></canvas>
+
+<section id="hero">
+  <span class="tag">DEMOSTRACIÓN · PROGRAMACIÓN</span>
+  <h1 id="title">Hola, soy Angel</h1>
+  <p>Alumno de la <b>U.E.G.P. Nº 72 “Cacique Pelayo”</b>. Estudio programación y esta página es una muestra de lo que se puede crear con código. Bajá despacio: todo se arma y se diseña en tiempo real. ↓</p>
+</section>
+
+<section class="rv">
+  <span class="tag">SOBRE MÍ</span>
+  <h2>Quién soy</h2>
+  <div class="me"><div class="av">A</div>
+  <div><h3 style="margin:0 0 8px;font-size:1.6rem">Soy Angel, <span id="role"></span></h3>
+  <p>Soy de Argentina, alumno de la U.E.G.P. Nº 72 “Cacique Pelayo” y me apasiona crear cosas con código: juegos, apps y páginas web que funcionan de verdad.</p>
+  <div class="chips"><span>Juegos</span><span>Páginas web</span><span>Apps</span><span>Diseño neón</span><span>Música</span></div></div></div>
+  <div class="stats">
+    <div class="stat"><b class="cnt" data-n="4">0</b>Proyectos online</div>
+    <div class="stat"><b class="cnt" data-n="1">0</b>Terminado</div>
+    <div class="stat"><b class="cnt" data-n="3">0</b>En desarrollo</div>
+    <div class="stat"><b>∞</b>Ganas de aprender</div>
+  </div>
+</section>
+
+<section class="rv">
+  <span class="tag">PROYECTOS</span>
+  <h2>Lo que ya creé</h2>
+  <p>Tocá cualquier tarjeta para abrir el proyecto real.</p>
+  <div class="pj">
+    <a class="proj" href="https://angelbperezia-source.github.io/Nauoxo/" target="_blank" rel="noopener"><span class="st">TERMINADO</span><h3>🏆 Nauoxo 2026</h3><p>Proyecto finalizado y publicado en la web.</p><small>Abrir →</small></a>
+    <a class="proj" href="https://angelbperezia-source.github.io/juego/" target="_blank" rel="noopener"><span class="st dev">EN DESARROLLO</span><h3>🚀 Juego de naves</h3><p>Shooter espacial con disparos y enemigos que sigo mejorando.</p><small>Jugar →</small></a>
+    <a class="proj" href="https://angelbperezia-source.github.io/masmsic/" target="_blank" rel="noopener"><span class="st dev">EN DESARROLLO</span><h3>🎵 Reproductor Rick and Morty</h3><p>Reproductor de música con temática de Rick and Morty.</p><small>Escuchar →</small></a>
+    <a class="proj" href="https://juegostecnora.gamer.gd/index.html" target="_blank" rel="noopener"><span class="st dev">EN DESARROLLO</span><h3>📱 Web de reparación de celulares</h3><p>Sitio para un servicio de reparación de celulares.</p><small>Visitar →</small></a>
+  </div>
+</section>
+
+<section class="rv">
+  <span class="tag">01 · CÓDIGO EN VIVO</span>
+  <h2>Mirá cómo el código dibuja el diseño</h2>
+  <div class="row">
+    <pre id="code"></pre>
+    <div id="pv">Esta caja se diseña sola ✨</div>
+  </div>
+</section>
+
+<section class="rv">
+  <span class="tag">02 · JUEGOS</span>
+  <h2>Un mini juego hecho con código</h2>
+  <p>Movés la nave con el mouse o el dedo. Dispara sola: destruí los meteoros y sumá puntos.</p>
+  <div class="row"><canvas id="game" width="340" height="420"></canvas>
+  <div><h3 style="margin:0">Puntos: <span id="score">0</span></h3><p>Los juegos usan lógica, matemática y creatividad. Cada nivel, enemigo y efecto lo decide el programador.</p></div></div>
+</section>
+
+<section class="rv">
+  <span class="tag">03 · MÚSICA</span>
+  <h2>Tu propio estudio de sonido</h2>
+  <p>Tocá las teclas (sonido generado por código, sin archivos) o activá el ritmo automático.</p>
+  <div class="pads" id="pads"></div>
+  <div><button id="beat">▶ Ritmo automático</button></div>
+</section>
+
+<section class="rv">
+  <span class="tag">04 · IMÁGENES</span>
+  <h2>Subí una imagen y transformala</h2>
+  <div id="imgbox">Tu imagen acá 🖼️</div>
+  <input type="file" id="file" accept="image/*">
+  <label>Color <input type="range" id="hue" min="0" max="360" value="0"></label>
+  <label>Contraste <input type="range" id="con" min="50" max="250" value="100"></label>
+  <label>Desenfoque <input type="range" id="blur" min="0" max="12" value="0"></label>
+</section>
+
+<section class="rv">
+  <span class="tag">05 · ESTILOS</span>
+  <h2>Casillas de estilos distintos</h2>
+  <div class="row">
+    <label>Color principal <input type="color" id="acc" value="#00f0ff"></label>
+    <label>Letra <select id="font"><option value="'Trebuchet MS',system-ui,sans-serif">Moderna</option><option value="'Courier New',monospace">Hacker</option><option value="Georgia,serif">Elegante</option><option value="'Comic Sans MS',cursive">Divertida</option></select></label>
+  </div>
+  <div class="cards">
+    <div class="card c1">Cristal 🧊<br><small>Efecto vidrio</small></div>
+    <div class="card c2">Neón 💡<br><small>Brilla en la noche</small></div>
+    <div class="card c3">Retro 🕹️<br><small>Estilo comic</small></div>
+    <div class="card c4">Degradé 🌈<br><small>Animado</small></div>
+  </div>
+</section>
+
+<section class="rv">
+  <span class="tag">06 · TU FUTURO</span>
+  <h2>¿Por qué estudiar programación?</h2>
+  <ul class="list">
+    <li>💼 Es una de las habilidades más pedidas en el mundo laboral.</li>
+    <li>🎮 Podés crear juegos, apps, sitios web y herramientas propias.</li>
+    <li>🧠 Desarrolla la lógica, la creatividad y la resolución de problemas.</li>
+    <li>🌍 Permite trabajar para cualquier lugar, hasta desde tu casa.</li>
+    <li>🚀 Con ganas y práctica, podés destacarte y emprender tu propio proyecto.</li>
+  </ul>
+</section>
+
+<section class="rv">
+  <span class="tag">CONTACTO</span>
+  <h2>Hablemos</h2>
+  <p>¿Querés un proyecto, aprender o simplemente charlar de programación? Escribime.</p>
+  <div class="soc">
+    <a href="https://wa.me/5493624608544" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#128c7e,#25d366)">💬 WhatsApp<small>+54 9 362 460-8544</small></a>
+    <a href="https://www.instagram.com/angelnomas10?stkn=OGVja281aTR0Ym85" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#7b2cff,#ff2bd6,#ffb347)">📸 Instagram<small>@angelnomas10</small></a>
+    <a href="https://www.facebook.com/profile.php?id=61564080877000" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#1456d8,#4aa3ff)">👍 Facebook<small>Mi perfil</small></a>
+  </div>
+</section>
+<canvas id="fx"></canvas><canvas id="mx"></canvas><button id="mxb">🧪 Modo Matrix</button>
+<div id="ctl"><button id="ld">📂 Canción</button><button id="pp">▶</button><input type="file" id="song" accept="audio/*" hidden><select id="pal" aria-label="Colores"><option value="neon">🎨 Neón</option><option value="fire">🔥 Fuego</option><option value="ocean">🌊 Océano</option><option value="rain">🌈 Arcoíris</option><option value="mine">🎯 Mi color</option></select><button id="md">🌓 Auto</button></div>
+<footer class="rv">
+  <div class="big">¿Te animás a crear algo increíble?</div>
+  <p style="margin:20px auto">Hecho con código por <b>Angel</b><br>U.E.G.P. Nº 72 “Cacique Pelayo” · Programación</p>
+</footer>
+
+<script>
+var $=function(s){return document.querySelector(s)};
+// Título letra por letra
+var t=$('#title'),txt=t.textContent;t.textContent='';
+for(var i=0;i<txt.length;i++){var s=document.createElement('span');s.className='ch';s.textContent=txt[i]===' '?'\u00a0':txt[i];s.style.setProperty('--c',(i*28+170)%360);s.style.transitionDelay=(i*70)+'ms';t.appendChild(s)}
+setTimeout(function(){t.classList.add('go')},200);
+// Reveal + progreso + fondo
+var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');if(x.target.querySelector('#code'))typeCode()}})},{threshold:.2});
+document.querySelectorAll('.rv').forEach(function(e){io.observe(e)});
+addEventListener('scroll',function(){var h=document.documentElement,p=scrollY/(h.scrollHeight-innerHeight||1);$('#bar').style.width=p*100+'%';document.documentElement.style.setProperty('--h',260+p*200)},{passive:true});
+// Código en vivo
+var lines=['background: #1a0033;','color: #00f0ff;','border-radius: 40px;','box-shadow: 0 0 40px #ff2bd6;','transform: rotate(-4deg) scale(1.05);','font-size: 2rem;','letter-spacing: 4px;'],typing=false;
+function typeCode(){if(typing)return;typing=true;var c=$('#code'),pv=$('#pv'),n=0,i=0,css='';c.textContent='#caja {\n';pv.style.cssText='';
+(function step(){if(n>=lines.length){c.textContent+='}';setTimeout(function(){typing=false},3000);return}
+var L=lines[n];if(i<L.length){c.textContent+=(i===0?'  ':'')+L[i++];setTimeout(step,35)}else{c.textContent+='\n';css+=L;pv.style.cssText=css;n++;i=0;setTimeout(step,250)}})()}
+// Juego
+var cv=$('#game'),cx=cv.getContext('2d'),W=340,H=420,ship={x:170},bl=[],en=[],sc=0,fr=0;
+function mv(e){var r=cv.getBoundingClientRect(),p=e.touches?e.touches[0]:e;ship.x=(p.clientX-r.left)*W/r.width}
+cv.addEventListener('mousemove',mv);cv.addEventListener('touchmove',function(e){e.preventDefault();mv(e)},{passive:false});
+(function loop(){fr++;cx.fillStyle='#02010c';cx.fillRect(0,0,W,H);
+for(var k=0;k<30;k++){cx.fillStyle='#fff6';cx.fillRect((k*97)%W,(k*53+fr*(1+k%3))%H,2,2)}
+if(fr%8==0)bl.push({x:ship.x,y:380});if(fr%35==0)en.push({x:20+Math.random()*300,y:-20,r:12+Math.random()*12});
+cx.fillStyle='#00f0ff';cx.beginPath();cx.moveTo(ship.x,370);cx.lineTo(ship.x-15,402);cx.lineTo(ship.x+15,402);cx.fill();
+cx.fillStyle='#ff2bd6';bl.forEach(function(b){b.y-=7;cx.fillRect(b.x-2,b.y,4,10)});bl=bl.filter(function(b){return b.y>0});
+en.forEach(function(e){e.y+=2;cx.fillStyle='#ffd23f';cx.beginPath();cx.arc(e.x,e.y,e.r,0,7);cx.fill();
+bl.forEach(function(b){if(Math.abs(b.x-e.x)<e.r&&Math.abs(b.y-e.y)<e.r){e.dead=1;b.y=-9;sc++;$('#score').textContent=sc}})});
+en=en.filter(function(e){return !e.dead&&e.y<H+30});requestAnimationFrame(loop)})();
+// Música
+var ac,notes=[262,294,330,349,392,440,494,523];
+function tone(f){ac=ac||new (window.AudioContext||window.webkitAudioContext)();var o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.3,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.6);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.6)}
+notes.forEach(function(f,i){var b=document.createElement('button');b.textContent='♪ '+(i+1);b.onclick=function(){tone(f)};$('#pads').appendChild(b)});
+var bt=null,bi=0,seq=[0,2,4,7,4,2,5,3];
+$('#beat').onclick=function(){if(bt){clearInterval(bt);bt=null;this.textContent='▶ Ritmo automático'}else{this.textContent='⏹ Parar';bt=setInterval(function(){tone(notes[seq[bi++%8]])},280)}};
+// Imágenes
+var ib=$('#imgbox');
+function fx(){ib.style.filter='hue-rotate('+$('#hue').value+'deg) contrast('+$('#con').value+'%) blur('+$('#blur').value+'px)'}
+['#hue','#con','#blur'].forEach(function(s){$(s).oninput=fx});
+$('#file').onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){ib.style.backgroundImage='url('+r.result+')';ib.textContent=''};r.readAsDataURL(f)};
+// Estilos
+$('#acc').oninput=function(e){document.documentElement.style.setProperty('--a',e.target.value)};
+$('#font').onchange=function(e){document.documentElement.style.setProperty('--f',e.target.value)};
+// Rotador de roles
+var R=['programador','creador de juegos','diseñador web','creador de apps'],ri=0,rc=0,rd=0;
+(function tk(){var e=$('#role'),w=R[ri];if(!rd){e.textContent=w.slice(0,++rc);if(rc==w.length){rd=1;return setTimeout(tk,1400)}}else{e.textContent=w.slice(0,--rc);if(!rc){rd=0;ri=(ri+1)%R.length}}setTimeout(tk,rd?40:90)})();
+// Contadores
+var io2=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting&&!x.target.d){x.target.d=1;var n=+x.target.dataset.n,i=0,t=setInterval(function(){x.target.textContent=++i;if(i>=n)clearInterval(t)},250)}})});
+document.querySelectorAll('.cnt').forEach(function(e){io2.observe(e)});
+// Partículas con el cursor y confeti al tocar
+var fc=$('#fx'),fg=fc.getContext('2d'),P=[];function rs(){fc.width=innerWidth;fc.height=innerHeight}rs();addEventListener('resize',rs);
+function sp(x,y,n,v){for(var i=0;i<n;i++){var a=Math.random()*6.28,s=Math.random()*v;P.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-1,l:1,c:Math.random()*360})}}
+function pm(e){var p=e.touches?e.touches[0]:e;sp(p.clientX,p.clientY,2,2)}
+addEventListener('mousemove',pm);addEventListener('touchmove',pm,{passive:true});
+addEventListener('click',function(e){sp(e.clientX,e.clientY,30,7)});
+(function fl2(){fg.clearRect(0,0,fc.width,fc.height);P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.08;p.l-=.02;fg.fillStyle='hsla('+p.c+',100%,60%,'+Math.max(p.l,0)+')';fg.fillRect(p.x,p.y,5,5)});P=P.filter(function(p){return p.l>0});requestAnimationFrame(fl2)})();
+// Modo Matrix
+var mc=$('#mx'),mg=mc.getContext('2d'),dr=[];
+function mr(){mc.width=innerWidth;mc.height=innerHeight;dr=[];for(var i=0;i<Math.ceil(innerWidth/16);i++)dr.push(Math.random()*40)}mr();addEventListener('resize',mr);
+setInterval(function(){if(!mc.classList.contains('on'))return;mg.fillStyle='rgba(7,6,26,.12)';mg.fillRect(0,0,mc.width,mc.height);mg.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--a').trim();mg.font='15px monospace';dr.forEach(function(y,i){mg.fillText(String.fromCharCode(0x30A0+Math.random()*60),i*16,y*16);dr[i]=y*16>mc.height&&Math.random()>.97?0:y+1})},60);
+$('#mxb').onclick=function(){mc.classList.toggle('on')};
+// Efecto 3D en tarjetas
+document.querySelectorAll('.proj').forEach(function(c){c.onmousemove=function(e){var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform='perspective(600px) rotateY('+x*16+'deg) rotateX('+-y*16+'deg) scale(1.03)'};c.onmouseleave=function(){c.style.transform=''}});
+// Fondo de panales + visualizador de música + modo día/noche
+var hx=$('#hx'),hc=hx.getContext('2d'),HR=32,cells=[],HC=1,HRW=1,pal='neon',mode='dark',mxp=-999,myp=-999,an=null,fd=null,ax=null,au=new Audio(),md='auto',mq=matchMedia('(prefers-color-scheme: light)');
+au.loop=true;
+function hb(){var d=Math.min(devicePixelRatio||1,2);hx.width=innerWidth*d;hx.height=innerHeight*d;hc.setTransform(d,0,0,d,0,0);HR=innerWidth<600?22:32;var w=HR*1.732,h=HR*1.5;HC=Math.ceil(innerWidth/w)+2;HRW=Math.ceil(innerHeight/h)+2;cells=[];for(var r=0;r<HRW;r++)for(var c=0;c<HC;c++)cells.push({x:c*w+(r%2?w/2:0)-w/2,y:r*h,c:c,r:r,n:Math.random(),v:0})}
+hb();addEventListener('resize',hb);
+function hex(x,y,s){hc.beginPath();for(var j=0;j<6;j++){var a=Math.PI/3*j+Math.PI/6;hc.lineTo(x+s*Math.cos(a),y+s*Math.sin(a))}hc.closePath()}
+function hu(h){var r=parseInt(h.substr(1,2),16)/255,g=parseInt(h.substr(3,2),16)/255,b=parseInt(h.substr(5,2),16)/255,M=Math.max(r,g,b),m=Math.min(r,g,b),d=M-m;if(!d)return 0;var x=M==r?((g-b)/d)%6:M==g?(b-r)/d+2:(r-g)/d+4;return(x*60+360)%360}
+addEventListener('pointermove',function(e){mxp=e.clientX;myp=e.clientY});
+(function hl(){var L=mode=='light',D=document.documentElement,p=scrollY/Math.max(1,D.scrollHeight-innerHeight),T=performance.now()/1000,h0=hu($('#acc').value),pl=an&&!au.paused;
+hc.clearRect(0,0,innerWidth,innerHeight);if(pl)an.getByteFrequencyData(fd);
+for(var i=0;i<cells.length;i++){var k=cells[i],th=k.r/HRW*.7+k.n*.2,up=Math.min(1,Math.max(0,(p*1.6+.1-th)*3)),a=0,f=k.c/HC;
+if(pl){var bi=Math.floor(Math.abs(k.c-HC/2)/(HC/2)*fd.length*.55),br=(HRW-k.r)/HRW,m=fd[bi]/255;a=m>br*.9?(.45+m*.5):0}
+var dd=Math.hypot(k.x-mxp,k.y-myp),ho=Math.max(0,1-dd/120),id=(Math.sin(T*1.3+k.c*.5+k.r*.45)+1)*.05;
+k.v+=(Math.max(a,ho*.9,id)-k.v)*.3;
+var lf=up*12+k.v*10,y=k.y-lf,hue=pal=='fire'?f*55:pal=='ocean'?180+f*70:pal=='rain'?(f*360+T*20)%360:pal=='mine'?h0+f*50:170+f*150;
+if(lf>1){hex(k.x,k.y,HR-2);hc.fillStyle=L?'rgba(20,30,90,.14)':'rgba(0,0,0,.5)';hc.fill()}
+hex(k.x,y,HR-2);hc.fillStyle=L?'rgba(255,255,255,.55)':'rgba(255,255,255,.04)';hc.fill();
+if(k.v>.06){hc.fillStyle='hsla('+hue+',95%,'+(L?50:58)+'%,'+Math.min(1,k.v*.9)+')';hc.fill()}
+hc.lineWidth=1.5;hc.strokeStyle='hsla('+hue+',90%,'+(L?42:62)+'%,'+(.22+up*.3+k.v*.5)+')';hc.stroke()}
+requestAnimationFrame(hl)})();
+$('#pal').onchange=function(e){pal=e.target.value};
+$('#ld').onclick=function(){$('#song').click()};
+$('#song').onchange=function(e){var f=e.target.files[0];if(!f)return;au.src=URL.createObjectURL(f);ax=ax||new (window.AudioContext||window.webkitAudioContext)();if(!an){var s2=ax.createMediaElementSource(au);an=ax.createAnalyser();an.fftSize=256;an.smoothingTimeConstant=.8;s2.connect(an);an.connect(ax.destination);fd=new Uint8Array(an.frequencyBinCount)}ax.resume();au.play();$('#pp').textContent='⏸'};
+$('#pp').onclick=function(){if(!au.src){$('#song').click();return}if(au.paused){ax.resume();au.play();this.textContent='⏸'}else{au.pause();this.textContent='▶'}};
+function am(){var m=md=='auto'?(mq.matches?'light':'dark'):md;document.documentElement.dataset.m=m;mode=m;$('#md').textContent=md=='auto'?'🌓 Auto':md=='light'?'☀️ Día':'🌙 Noche'}
+mq.addEventListener('change',am);am();
+$('#md').onclick=function(){md=md=='auto'?'light':md=='light'?'dark':'auto';am()};
+</script>
+</body>
+</html>
